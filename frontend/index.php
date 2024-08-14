@@ -21,5 +21,10 @@
         }
         ?>
     </ul>
+    <h2>Service Health</h2>
+	<?php
+	$timing = file_get_contents('http://flask_app:4000/time');
+	echo "<h3> Last profile was created in: " . htmlspecialchars($timing) . " seconds.</h3>";
+	?>
 </body>
 </html>

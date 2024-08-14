@@ -1,8 +1,8 @@
 from flask import Flask, request, jsonify, make_response, render_template
 from flask_sqlalchemy import SQLAlchemy
 from os import environ
-import time
-
+from datetime import datetime
+elapsed_time = 0.00
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('DB_URL')
 db = SQLAlchemy(app)
@@ -27,15 +27,15 @@ def test():
 @app.route('/users', methods=['POST'])
 def create_user():
   try:
-    start = time.time()
+    start_time = datetime.now()
     data = request.get_json()
     new_user = User(username=data['username'], email=data['email'])
     db.session.add(new_user)
     db.session.commit()
-    end = time.time()
-    elapsed = end - start
-    return make_response(jsonify({'message': 'user created', 'elapsed-time': f"{elapsed}"}), 201)
-  except e:
+    global elapsed_time
+    elapsed_time = datetime.now() - start_time
+    return make_response(jsonify({'message': 'user created', 'elapsed-time': f"{elapsed_time.total_seconds()}"}), 201)
+  except Exception as e:
     return make_response(jsonify({'message': 'error creating user'}), 500)
 
 # get all users
@@ -44,8 +44,16 @@ def get_users():
   try:
     users = User.query.all()
     return make_response(jsonify([user.json() for user in users]), 200)
-  except e:
+  except Exception as e:
     return make_response(jsonify({'message': 'error getting users'}), 500)
+
+# get all users
+@app.route('/time', methods=['GET'])
+def time():
+  try:
+    return make_response(str(elapsed_time.total_seconds()), 202)
+  except Exception as e:
+    return make_response("timing not found", 500)
 
 
 # get a user by id
