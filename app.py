@@ -1,6 +1,9 @@
 from flask import Flask, request, jsonify, make_response, render_template
 from flask_sqlalchemy import SQLAlchemy
 from os import environ
+import pandas as pd
+import csv
+from io import StringIO
 from datetime import datetime
 elapsed_time = 0.00
 app = Flask(__name__)
@@ -21,7 +24,6 @@ db.create_all()
 @app.route('/test', methods=['GET'])
 def test():
   return make_response(jsonify({'message': 'test route'}), 200)
-
 
 # create a user
 @app.route('/users', methods=['POST'])
@@ -47,7 +49,7 @@ def get_users():
   except Exception as e:
     return make_response(jsonify({'message': 'error getting users'}), 500)
 
-# get all users
+# time control for service health
 @app.route('/time', methods=['GET'])
 def time():
   try:
@@ -66,6 +68,35 @@ def get_user(id):
     return make_response(jsonify({'message': 'user not found'}), 404)
   except e:
     return make_response(jsonify({'message': 'error getting user'}), 500)
+
+@app.route('/upload', methods=['POST'])
+def upload_file():
+  try:
+   if 'file' not in request.files:
+     return jsonify({'error':'No file'})
+
+   raw_file = request.files['file']
+   print("recieved file")
+   df = pd.read_csv(StringIO(raw_file.read().decode('utf-8')))
+   print("csv file went successful")
+#   return make_response(jsonify({'message': 'file uploads successfully dumbo'}), 201)
+   return data_processing(df)
+  except Exception as e:
+    return make_response(jsonify({'message': 'error processing file'}), 500)
+
+def data_processing(pfile):
+  try:
+    start_time = datetime.now()
+    for index,row in pfile.iterrows():
+      new_user = User(username=row['username'], email=row['email'])
+      db.session.add(new_user)
+      db.session.commit()
+    global elapsed_time
+    elapsed_time = datetime.now() - start_time
+    return make_response(jsonify({'message':'users created successfully'}),201)
+  except Exception as e:
+     return make_response(jsonify({'message': 'error creating user'}), 500)
+
 
 # update a user
 @app.route('/users/<int:id>', methods=['PUT'])

@@ -21,10 +21,15 @@
         }
         ?>
     </ul>
+    <h2>Upload CSV file</h2>
+    <form method= "POST" action="http://localhost:4000/upload" enctype="multipart/form-data">
+	<p><input type="file" name="file"></p>
+	<p><input type="submit" value="Submit"></p>
+    </form>
     <h2>Service Health</h2>
 	<?php
 	$timing = file_get_contents('http://flask_app:4000/time');
-	echo "<h3> Last profile was created in: " . htmlspecialchars($timing) . " seconds.</h3>";
+	echo "<h3> Last execution took: " . htmlspecialchars($timing) . " seconds.</h3>";
 	?>
 </body>
 </html>
