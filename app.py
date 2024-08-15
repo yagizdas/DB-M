@@ -86,14 +86,20 @@ def upload_file():
 
 def data_processing(pfile):
   try:
+    discarded_users = []
     start_time = datetime.now()
     for index,row in pfile.iterrows():
-      new_user = User(username=row['username'], email=row['email'])
-      db.session.add(new_user)
-      db.session.commit()
+      try:
+        new_user = User(username=row['username'], email=row['email'])
+        db.session.add(new_user)
+        db.session.commit()
+      except:
+        discarded_users.append(row['username'])
     global elapsed_time
     elapsed_time = datetime.now() - start_time
-    return make_response(jsonify({'message':'users created successfully'}),201)
+    if not discarded_users:
+      return make_response(jsonify({'message':'users created successfully'}),201)
+    return make_response(jsonify({'discarded users':f'{discarded_users}','message':'users created with discarded users'}),201)
   except Exception as e:
      return make_response(jsonify({'message': 'error creating user'}), 500)
 
