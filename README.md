@@ -1,7 +1,11 @@
 <h1>DB-M</h1>
 
-A Database and Management tool bringing together technologies like docker, PostgreSQL, Flask and php to serve a database, a backend and a php web interface all in one machine yet in isolate enviroments.
+DB-M A Database and Management tool bringing together technologies like docker, PostgreSQL, Flask and php to serve a database, a backend and a php web interface all in one machine yet in isolate enviroments.
+<p></p>
+<img src="https://github.com/user-attachments/assets/ef8c2088-8dd4-4ba3-90a6-d5fa1f5ce468" width="705" height="300">
 
+
+<p></p>
 Users can access it via Postman or any other tool to make requests, post data or delete data. As well as upload csv files via html to deploy large amounts of input within seconds into the database.
 
 <h2>Installation</h2>
